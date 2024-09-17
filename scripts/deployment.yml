@@ -1,1 +1,37 @@
 # Write Kubernetes Deployment Script
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog-container
+        image: 40thomasroy/book-catalog:1.1
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASE_URL
+          value: postgresql://week62_user:UiR1l1UqWDfqXFrJzeXOZvzJGkVqhar6@dpg-crhut6jtq21c7383odig-a.oregon-postgres.render.com/week62
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog-service
+spec:
+  type: NodePort
+  selector:
+    app: book-catalog
+  ports:
+  - protocol: TCP
+    port: 8001
+    targetPort: 8001
+    nodePort: 30007  # Set your desired node port
